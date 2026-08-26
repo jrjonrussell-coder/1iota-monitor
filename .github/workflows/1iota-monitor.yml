@@ -1,8 +1,9 @@
-name: 1iota Daily Show monitor
+name: 1iota taping monitor
 
-# Alerts ONLY when a taping date appears in the target window.
-# Routine sweeps, and ordinary calendar churn, produce no notification.
-# No personal data in this file. Recipient address lives in a repository secret.
+# Watches three New York shows for taping dates inside 19 to 23 October 2026.
+# Alerts only on a state change: a target-window date appearing for the first
+# time, or that date becoming bookable. Routine sweeps are silent.
+# No personal data in this file. The recipient address lives in a secret.
 
 on:
   schedule:
@@ -14,7 +15,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write        # required to commit state/1iota-state.json
+  contents: write        # required to commit the state files
   issues: write          # required for the zero-config alert channel
 
 concurrency:
@@ -33,51 +34,78 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Install Playwright
+      # Fast path. Reads the JSON the 1iota front end itself consumes.
+      # No browser, no npm install, a few seconds per sweep.
+      - name: Sweep (API)
+        id: sweep
+        continue-on-error: true
+        run: node scripts/check-1iota.mjs
+
+      # Only reached when the API pass failed. Installs a browser and re-reads
+      # the pages directly, so an API change degrades the monitor rather than
+      # silencing it.
+      - name: Install Playwright (fallback only)
+        if: steps.sweep.outcome == 'failure'
         run: |
           npm init -y >/dev/null 2>&1
           npm i --no-audit --no-fund playwright@1.62.1 >/dev/null 2>&1
           npx playwright install --with-deps chromium
 
-      - name: Sweep 1iota
-        id: sweep
+      - name: Sweep (DOM fallback)
+        id: sweep_dom
+        if: steps.sweep.outcome == 'failure'
+        env:
+          IOTA_ALLOW_DOM: '1'
         run: node scripts/check-1iota.mjs
 
-      # Zero-configuration alert. Fires only on availability.
-      - name: Open issue on availability
-        if: steps.sweep.outputs.notify == 'true'
+      - name: Resolve sweep result
+        id: result
+        run: |
+          if [ "${{ steps.sweep.outcome }}" = "success" ]; then
+            echo "notify=${{ steps.sweep.outputs.notify }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "notify=${{ steps.sweep_dom.outputs.notify }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Zero-configuration alert channel.
+      - name: Open issue on change
+        if: steps.result.outputs.notify == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh issue create \
-            --title "TICKETS AVAILABLE - The Daily Show, 19 to 25 October 2026" \
+            --title "1iota: taping dates listed for 19 to 23 October 2026" \
             --body-file summary.txt
 
-      # Direct email. Sent with the standard library, no third-party action,
-      # so no external code ever sees the mail credentials.
-      - name: Email on availability
-        if: steps.sweep.outputs.notify == 'true' && env.MAIL_READY == 'true'
+      # Direct email, sent with the standard library. No third-party action
+      # ever sees the mail credentials.
+      - name: Email on change
+        if: steps.result.outputs.notify == 'true' && env.MAIL_READY == 'true'
         env:
           MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
           MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
           MAIL_TO: ${{ secrets.MAIL_TO }}
-          SUBJECT: 'ALERT: The Daily Show taping dates listed, 19 to 25 October 2026'
+          SUBJECT: 'ALERT: 1iota taping dates, 19 to 23 October 2026'
         run: python3 scripts/send-mail.py
 
       - name: Email on sweep failure
-        if: failure() && env.MAIL_READY == 'true'
+        if: steps.sweep.outcome == 'failure' && steps.sweep_dom.outcome == 'failure' && env.MAIL_READY == 'true'
         env:
           MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
           MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
           MAIL_TO: ${{ secrets.MAIL_TO }}
-          SUBJECT: '1iota monitor: sweep failed'
-          BODY: 'The hourly 1iota sweep failed. Check the workflow run log. Silence from this monitor must not be read as no tickets.'
+          SUBJECT: '1iota monitor: sweep failed on both routes'
+          BODY: 'The 1iota sweep failed on the API and on the DOM fallback. Check the workflow run log. Silence from this monitor must not be read as no tickets.'
         run: python3 scripts/send-mail.py
 
       - name: Commit state
         run: |
           git config user.name  "1iota-monitor"
           git config user.email "actions@github.com"
-          git add state/1iota-state.json
+          git add state
           git diff --staged --quiet || git commit -m "sweep $(date -u +%FT%TZ)"
           git push
+
+      - name: Fail the run if both routes failed
+        if: steps.sweep.outcome == 'failure' && steps.sweep_dom.outcome == 'failure'
+        run: exit 1
