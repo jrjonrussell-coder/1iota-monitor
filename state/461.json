@@ -1,0 +1,22 @@
+{
+  "checkedAtUtc": "2026-08-26T21:34:12.777Z",
+  "projectId": 461,
+  "name": "Late Night with Seth Meyers",
+  "showUrl": "https://1iota.com/show/461/late-night-with-seth-meyers",
+  "source": "api",
+  "apiError": null,
+  "eventCount": 7,
+  "furthestDateListed": "2026-09-30",
+  "allDates": [
+    "2026-09-21",
+    "2026-09-28",
+    "2026-09-28",
+    "2026-09-23",
+    "2026-09-24",
+    "2026-09-30",
+    "2026-09-21"
+  ],
+  "inWindow": [],
+  "notifiedAppeared": [],
+  "notifiedBookable": []
+}
