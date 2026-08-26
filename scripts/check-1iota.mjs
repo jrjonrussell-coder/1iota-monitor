@@ -20,8 +20,8 @@ import { readFileSync, writeFileSync, existsSync, appendFileSync } from 'node:fs
 
 const SHOW_URL = 'https://1iota.com/show/1248/the-daily-show';
 const STATE_PATH = 'state/1iota-state.json';
-const WINDOW_START = new Date('2026-10-01T00:00:00Z');
-const WINDOW_END = new Date('2026-10-01T23:59:59Z');
+const WINDOW_START = new Date('2026-10-19T00:00:00Z');
+const WINDOW_END = new Date('2026-10-25T23:59:59Z');
 const BOOKABLE = /request\s*tickets/i;
 
 const MONTHS = { jan:0, feb:1, mar:2, apr:3, may:4, jun:5, jul:6, aug:7, sep:8, oct:9, nov:10, dec:11 };
