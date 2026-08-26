@@ -1,0 +1,79 @@
+name: 1iota Daily Show monitor
+
+# Alerts ONLY when a taping date appears in the target window.
+# Routine sweeps, and ordinary calendar churn, produce no notification.
+# No personal data in this file. Recipient address lives in a repository secret.
+
+on:
+  schedule:
+    - cron: '7 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write        # required to commit state/1iota-state.json
+  issues: write          # required for the zero-config alert channel
+
+concurrency:
+  group: 1iota-monitor
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    env:
+      MAIL_READY: ${{ secrets.MAIL_USERNAME != '' && secrets.MAIL_PASSWORD != '' && secrets.MAIL_TO != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm i --no-audit --no-fund playwright@1.62.1 >/dev/null 2>&1
+          npx playwright install --with-deps chromium
+
+      - name: Sweep 1iota
+        id: sweep
+        run: node scripts/check-1iota.mjs
+
+      # Zero-configuration alert. Fires only on availability.
+      - name: Open issue on availability
+        if: steps.sweep.outputs.notify == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create \
+            --title "TICKETS AVAILABLE - The Daily Show, 19 to 25 October 2026" \
+            --body-file summary.txt
+
+      # Direct email. Sent with the standard library, no third-party action,
+      # so no external code ever sees the mail credentials.
+      - name: Email on availability
+        if: steps.sweep.outputs.notify == 'true' && env.MAIL_READY == 'true'
+        env:
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+          SUBJECT: 'ALERT: The Daily Show taping dates listed, 19 to 25 October 2026'
+        run: python3 scripts/send-mail.py
+
+      - name: Email on sweep failure
+        if: failure() && env.MAIL_READY == 'true'
+        env:
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+          SUBJECT: '1iota monitor: sweep failed'
+          BODY: 'The hourly 1iota sweep failed. Check the workflow run log. Silence from this monitor must not be read as no tickets.'
+        run: python3 scripts/send-mail.py
+
+      - name: Commit state
+        run: |
+          git config user.name  "1iota-monitor"
+          git config user.email "actions@github.com"
+          git add state/1iota-state.json
+          git diff --staged --quiet || git commit -m "sweep $(date -u +%FT%TZ)"
+          git push
