@@ -1,1 +1,29 @@
-{}
+{
+  "checkedAtUtc": "2026-08-26T13:53:44.199Z",
+  "showUrl": "https://1iota.com/show/1248/the-daily-show",
+  "expandControlFound": true,
+  "tileCount": 14,
+  "allTiles": [
+    "SEP 8 SOLD OUT [SOLD OUT]",
+    "SEP 9 WED",
+    "SEP 10 THU",
+    "SEP 15 TUE",
+    "SEP 16 WED",
+    "SEP 17 THU",
+    "SEP 21 SOLD OUT [SOLD OUT]",
+    "SEP 22 TUE",
+    "SEP 23 WED",
+    "SEP 24 THU",
+    "SEP 28 SOLD OUT [SOLD OUT]",
+    "SEP 29 TUE",
+    "SEP 30 WED",
+    "OCT 1 THU"
+  ],
+  "lastListedDate": "OCT 1 THU",
+  "inspected": [],
+  "availability": false,
+  "alreadyNotified": false,
+  "apiHits": [
+    "https://prod-tickets.1iota.com/api/project/1248"
+  ]
+}
