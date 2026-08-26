@@ -1,5 +1,5 @@
 {
-  "checkedAtUtc": "2026-08-26T20:28:06.565Z",
+  "checkedAtUtc": "2026-08-26T20:40:22.595Z",
   "showUrl": "https://1iota.com/show/1248/the-daily-show",
   "expandControlFound": true,
   "tileCount": 14,
@@ -20,9 +20,18 @@
     "OCT 1 THU"
   ],
   "lastListedDate": "OCT 1 THU",
-  "inspected": [],
-  "availability": false,
-  "alreadyNotified": false,
+  "inspected": [
+    {
+      "text": "OCT 1 THU",
+      "soldout": false,
+      "active": false,
+      "date": "2026-10-01T00:00:00.000Z",
+      "cta": "REQUEST TICKETS",
+      "bookable": true
+    }
+  ],
+  "availability": true,
+  "alreadyNotified": true,
   "apiHits": [
     "https://prod-tickets.1iota.com/api/project/1248"
   ]
