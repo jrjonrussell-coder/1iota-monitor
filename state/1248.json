@@ -1,5 +1,5 @@
 {
-  "checkedAtUtc": "2026-08-27T11:08:10.974Z",
+  "checkedAtUtc": "2026-08-27T13:26:55.126Z",
   "projectId": 1248,
   "name": "The Daily Show",
   "showUrl": "https://1iota.com/show/1248/the-daily-show",
@@ -23,7 +23,21 @@
     "2026-09-16",
     "2026-09-17"
   ],
-  "inWindow": [],
-  "notifiedAppeared": [],
-  "notifiedBookable": []
+  "inWindow": [
+    {
+      "eventId": 90900,
+      "date": "2026-09-30",
+      "localStartDay": "Wed, Sep 30",
+      "when": "4:30 PM",
+      "isSoldOut": false,
+      "isMaxRequestMet": false,
+      "buttonLabel": "Request Tickets"
+    }
+  ],
+  "notifiedAppeared": [
+    "2026-09-30"
+  ],
+  "notifiedBookable": [
+    "2026-09-30"
+  ]
 }

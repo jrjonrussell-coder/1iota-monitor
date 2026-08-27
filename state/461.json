@@ -1,5 +1,5 @@
 {
-  "checkedAtUtc": "2026-08-27T11:08:11.297Z",
+  "checkedAtUtc": "2026-08-27T13:26:55.355Z",
   "projectId": 461,
   "name": "Late Night with Seth Meyers",
   "showUrl": "https://1iota.com/show/461/late-night-with-seth-meyers",
@@ -16,7 +16,19 @@
     "2026-09-30",
     "2026-09-21"
   ],
-  "inWindow": [],
-  "notifiedAppeared": [],
+  "inWindow": [
+    {
+      "eventId": 93006,
+      "date": "2026-09-30",
+      "localStartDay": "Wed, Sep 30",
+      "when": "2:00 PM",
+      "isSoldOut": false,
+      "isMaxRequestMet": false,
+      "buttonLabel": "Join Waitlist"
+    }
+  ],
+  "notifiedAppeared": [
+    "2026-09-30"
+  ],
   "notifiedBookable": []
 }
