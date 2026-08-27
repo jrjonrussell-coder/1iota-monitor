@@ -39,7 +39,7 @@ jobs:
           age=$(( now - newest ))
           echo "Newest state file is ${age} seconds old."
 
-          if [ "$newest" -gt 0 ] && [ "$age" -lt 10800 ]; then
+          if [ "$newest" -gt 0 ] && [ "$age" -lt 43200 ]; then
             curl -fsS -m 10 --retry 5 -o /dev/null "${HC_URL}"
             echo "Monitor is alive. Pinged success."
           else
