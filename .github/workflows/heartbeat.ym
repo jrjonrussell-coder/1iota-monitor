@@ -1,0 +1,49 @@
+name: heartbeat
+
+on:
+  schedule:
+    - cron: '22 * * * *'
+  workflow_dispatch:
+
+jobs:
+  heartbeat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check state freshness and ping healthchecks
+        env:
+          HC_URL: ${{ secrets.HEALTHCHECK_URL }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${HC_URL}" ]; then
+            echo "HEALTHCHECK_URL secret is not set. Nothing to do."
+            exit 0
+          fi
+
+          newest=0
+          for f in state/1248.json state/461.json state/353.json; do
+            if [ -f "$f" ]; then
+              ts=$(python3 -c "
+          import json, datetime
+          d = json.load(open('$f'))
+          t = d['checkedAtUtc'].replace('Z', '+00:00')
+          print(int(datetime.datetime.fromisoformat(t).timestamp()))
+          ")
+              if [ "$ts" -gt "$newest" ]; then newest=$ts; fi
+            fi
+          done
+
+          now=$(date -u +%s)
+          age=$(( now - newest ))
+          echo "Newest state file is ${age} seconds old."
+
+          if [ "$newest" -gt 0 ] && [ "$age" -lt 10800 ]; then
+            curl -fsS -m 10 --retry 5 -o /dev/null "${HC_URL}"
+            echo "Monitor is alive. Pinged success."
+          else
+            curl -fsS -m 10 --retry 5 -o /dev/null "${HC_URL}/fail" || true
+            echo "Monitor state is stale or missing. Pinged failure."
+            exit 1
+          fi
