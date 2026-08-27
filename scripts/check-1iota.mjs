@@ -30,7 +30,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync, appendFileSync } fr
 
 // Trip: lands JFK 15:55 Fri 16 Oct; Washington DC 17 to 18 Oct;
 // departs JFK 18:20 Sat 24 Oct. Usable taping days are Mon 19 to Fri 23 only.
-const WINDOW = ['2026-09-30', '2026-10-20', '2026-10-21', '2026-10-22', '2026-10-23'];
+const WINDOW = ['2026-10-19', '2026-10-20', '2026-10-21', '2026-10-22', '2026-10-23'];
 const WINDOW_LABEL = '19 to 23 October 2026';
 
 const SHOWS = [
