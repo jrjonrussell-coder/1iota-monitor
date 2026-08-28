@@ -7,11 +7,8 @@ name: 1iota taping monitor
 
 on:
   schedule:
-    # Two entries per hour. GitHub throttles scheduled workflows on free public
-    # repos and silently drops runs, so a single entry produced roughly one run
-    # every three hours in practice. Two offsets halve the expected gap.
-    - cron: '7 * * * *'
-    - cron: '37 * * * *'
+    # Every 5 minutes, GitHub's minimum. GitHub throttles scheduled workflows on free public repos and silently drops most runs: observed delivery on 27-28 Aug 2026 was roughly 10% of what was configured, with gaps up to 9h47m. Asking for more attempts is the only free lever here. An independent second watcher (Google Apps Script) covers the gap and is not affected by this.
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 permissions:
