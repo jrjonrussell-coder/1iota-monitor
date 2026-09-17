@@ -1,16 +1,15 @@
 {
-  "checkedAtUtc": "2026-09-17T16:51:52.961Z",
+  "checkedAtUtc": "2026-09-17T19:54:21.469Z",
   "projectId": 353,
   "name": "The Tonight Show (Fallon)",
   "showUrl": "https://fallon.1iota.com/show/353/the-tonight-show",
   "source": "api",
   "apiError": null,
-  "eventCount": 9,
+  "eventCount": 8,
   "furthestDateListed": "2026-09-30",
   "allDates": [
     "2026-09-29",
     "2026-09-24",
-    "2026-09-17 [SOLD OUT]",
     "2026-09-27",
     "2026-09-28",
     "2026-09-22",
