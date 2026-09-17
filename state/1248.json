@@ -1,11 +1,11 @@
 {
-  "checkedAtUtc": "2026-09-17T19:54:20.747Z",
+  "checkedAtUtc": "2026-09-17T22:30:47.672Z",
   "projectId": 1248,
   "name": "The Daily Show",
   "showUrl": "https://1iota.com/show/1248/the-daily-show",
   "source": "api",
   "apiError": null,
-  "eventCount": 17,
+  "eventCount": 16,
   "furthestDateListed": "2026-10-22",
   "allDates": [
     "2026-09-21 [SOLD OUT]",
@@ -23,8 +23,7 @@
     "2026-10-01 [SOLD OUT]",
     "2026-10-22",
     "2026-10-07",
-    "2026-09-22",
-    "2026-09-17"
+    "2026-09-22"
   ],
   "inWindow": [
     {
